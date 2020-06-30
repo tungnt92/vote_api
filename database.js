@@ -9,7 +9,7 @@ let db = new sqlite3.Database(DBSOURCE, (err) => {
     console.error(err.message);
     throw err;
   } else {
-    // db.run(`drop table user_vote`,
+    // db.run(`drop table user`,
     //   (err) => {
     //     if (err) {
     //       // Table already created
@@ -64,7 +64,7 @@ let db = new sqlite3.Database(DBSOURCE, (err) => {
           db.run(insert, ['Kuro', 'kuro.tuan@gumiviet.com', 'male', md5('password'), 'images/user/Kuro.JPG']);
           db.run(insert, ['Kyle', 'kyle.phu@gumiviet.com', 'male', md5('password'), 'images/user/Kyle.JPG']);
           db.run(insert, ['Leon', 'tuan.nguyen@gumiviet.com', 'male', md5('password'), 'images/user/Leon.JPG']);
-          db.run(insert, ['Lynk Kyd', 'thai.pham@gumiviet.com', 'male', md5('password'), 'images/user/LynkKyd.JPG']);
+          db.run(insert, ['Lynk Kyd', 'thai.pham@gumiviet.com', 'male', md5('password'), 'images/user/LinkKyd.jpg']);
           db.run(insert, ['Louis', 'ngocthach.duong@gumiviet.com', 'male', md5('password'), 'images/user/Louis.JPG']);
           db.run(insert, ['Medal', 'chuong.nguyen@gumiviet.com', 'male', md5('password'), 'images/user/Medal.JPG']);
           db.run(insert, ['Mido', 'minh.ngo@gumiviet.com', 'male', md5('password'), 'images/user/Mido.JPG']);

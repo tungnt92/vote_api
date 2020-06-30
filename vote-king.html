@@ -18,13 +18,19 @@
     .btn-vote, .btn-back {
       position: fixed;
       width: 300px;
-      bottom: 50px;
+      bottom: 75px;
       left: 50%;
       transform: translateX(-50%);
+      z-index: 9999;
+      background-color: #FF5722;
+      text-align: center;
     }
 
     .btn-back {
-      bottom: 20px;
+      padding: 4px;
+      bottom: 30px;
+      border-radius: .25rem;
+      background-color: #2196F3;
     }
 
     input[type="radio"]:checked + label {
@@ -88,7 +94,7 @@
   $(document).ready(function () {
     var isLoggedIn = localStorage.getItem('isLoggedIn');
     if (isLoggedIn && parseInt(isLoggedIn)) {
-      console.log('sadsad');
+      console.log('isLoggedIn');
     } else {
       window.location.href = '/login';
     }
@@ -115,7 +121,6 @@
 
     $('#btn-vote').click(function () {
       var $formVote = $('#form-vote').serializeArray();
-      console.log($formVote);
       $.ajax({
         type: 'POST',
         url: '/api/vote',
@@ -124,7 +129,11 @@
           vote_king: $formVote[0].value
         }),
         success: function (res) {
-          console.log(res);
+          if (res.message === 'Vote rui may') {
+            alert('Vote rùi là không làm lại nhé bạn!');
+          } else {
+            window.location.href = '/';
+          }
         },
         contentType: 'application/json; charset=utf-8',
         dataType: 'json'

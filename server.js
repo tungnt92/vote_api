@@ -115,7 +115,7 @@ app.post('/api/vote', (req, res, next) => {
             `UPDATE user_vote set 
            vote_king = COALESCE(?,vote_king)
            WHERE id = ?`,
-          [req.body.vote_king, req.body.id],
+          [req.body.vote_king, row.id],
           function (err, result) {
             if (err) {
               res.status(400).json({'error': res.message});
@@ -132,7 +132,7 @@ app.post('/api/vote', (req, res, next) => {
             `UPDATE user_vote set 
            vote_queen = COALESCE(?,vote_queen)
            WHERE id = ?`,
-          [req.body.vote_queen, req.body.id],
+          [req.body.vote_queen, row.id],
           function (err, result) {
             if (err) {
               res.status(400).json({'error': res.message});
