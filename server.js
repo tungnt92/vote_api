@@ -113,7 +113,7 @@ app.post('/api/vote', (req, res, next) => {
       if (row.vote_king === null) {
         db.run(
             `UPDATE user_vote set 
-           vote_queen = COALESCE(?,vote_king)
+           vote_king = COALESCE(?,vote_king)
            WHERE id = ?`,
           [req.body.vote_king, req.body.id],
           function (err, result) {
