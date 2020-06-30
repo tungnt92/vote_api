@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+  <meta name="description" content=""/>
+  <meta name="author" content=""/>
+  <title>King & Queen Voting</title>
+
+  <!-- Bootstrap core CSS-->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <!-- Custom Style-->
+  <link href="css/app-style.css" rel="stylesheet"/>
+
+  <style>
+    .btn-vote, .btn-back {
+      position: fixed;
+      width: 300px;
+      bottom: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .btn-back {
+      bottom: 20px;
+    }
+
+    input[type="radio"]:checked + label {
+      border: dashed 8px deeppink;
+    }
+  </style>
+</head>
+
+<body class="bg-theme bg-theme4">
+
+<!-- Start wrapper-->
+<div id="wrapper">
+
+  <div class="loader-wrapper">
+    <div class="lds-ring">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </div>
+  <div class="clearfix"></div>
+  <div class="content-wrapper">
+    <div class="container-fluid">
+      <div class="row mt-3">
+        <div class="col-lg-6">
+          <div class="card" style="padding-bottom: 50px;">
+            <div class="card-body">
+              <div class="card-title">
+                KINGs
+              </div>
+              <hr>
+              <form id="form-vote">
+                <div id="user-images" class="row">
+
+                  <button id="btn-vote" type="button" class="btn btn-light px-5 btn-vote">
+                    Vote now
+                  </button>
+                  <br>
+                  <a class="btn-back" href="/">back</a>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--Start Back To Top Button-->
+  <a href="javaScript:void();" class="back-to-top"><i class="fa fa-angle-double-up"></i> </a>
+  <!--End Back To Top Button-->
+
+</div><!--wrapper-->
+
+<!-- Bootstrap core JavaScript-->
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+
+
+<script>
+  $(document).ready(function () {
+    var isLoggedIn = localStorage.getItem('isLoggedIn');
+    if (isLoggedIn && parseInt(isLoggedIn)) {
+      console.log('isLoggedIn');
+    } else {
+      window.location.href = '/login';
+    }
+
+    $.ajax({
+      type: 'GET',
+      url: '/api/users/female',
+      success: function (res) {
+        var $userImages = $('#user-images');
+        res.data.forEach(function (_user) {
+          console.log(_user);
+          $userImages.append('<div class="col-4">' +
+            '                      <div class="user-image">' +
+            '                        <input type="radio" id="' + _user.name + '-' + _user.id + '" name="user" value="' + _user.id + '" style="display: none">' +
+            '                        <label for="' + _user.name + '-' + _user.id + '"><img src="' + _user.url_img + '" alt=""></label>' +
+            '                        <span>' + _user.name + '</span>' +
+            '                      </div>' +
+            '                    </div>');
+        });
+      },
+      contentType: 'application/json; charset=utf-8',
+      dataType: 'json'
+    });
+
+    $('#btn-vote').click(function () {
+      var $formVote = $('#form-vote').serializeArray();
+      console.log($formVote);
+      $.ajax({
+        type: 'POST',
+        url: '/api/vote',
+        data: JSON.stringify({
+          id: localStorage.getItem('id'),
+          vote_queen: $formVote[0].value
+        }),
+        success: function (res) {
+          console.log(res);
+        },
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json'
+      });
+    });
+  });
+</script>
+
+</body>
+</html>

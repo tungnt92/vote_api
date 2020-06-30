@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+  <meta name="description" content=""/>
+  <meta name="author" content=""/>
+  <title>King & Queen Login</title>
+
+  <!-- Bootstrap core CSS-->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <!-- Custom Style-->
+  <link href="css/app-style.css" rel="stylesheet"/>
+
+</head>
+
+<body class="bg-theme bg-theme4">
+
+<!-- Start wrapper-->
+<div id="wrapper">
+
+  <div class="loader-wrapper">
+    <div class="lds-ring">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </div>
+  <div class="card card-authentication1 mx-auto my-5">
+    <div class="card-body">
+      <div class="card-content p-2">
+        <div class="text-center">
+          <img src="images/logo-icon.png" alt="logo icon">
+        </div>
+        <div class="card-title text-uppercase text-center py-3">Sign In</div>
+        <form>
+          <div class="form-group">
+            <label for="email" class="sr-only">Email</label>
+            <div class="position-relative has-icon-right">
+              <input type="text" id="email" class="form-control input-shadow" placeholder="Enter Username">
+              <div class="form-control-position">
+                <i class="icon-user"></i>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="password" class="sr-only">Password</label>
+            <div class="position-relative has-icon-right">
+              <input type="password" id="password" class="form-control input-shadow" placeholder="Enter Password">
+              <div class="form-control-position">
+                <i class="icon-lock"></i>
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-6">
+              <div class="icheck-material-white">
+                <input type="checkbox" id="user-checkbox" checked=""/>
+                <label for="user-checkbox">Remember me</label>
+              </div>
+            </div>
+          </div>
+          <button type="button" class="btn btn-light btn-block" onclick="login()">Sign In</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!--Start Back To Top Button-->
+  <a href="javaScript:void();" class="back-to-top"><i class="fa fa-angle-double-up"></i> </a>
+  <!--End Back To Top Button-->
+
+</div><!--wrapper-->
+
+<!-- Bootstrap core JavaScript-->
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<!--<script src="js/bootstrap.min.js"></script>-->
+
+<script>
+  function login () {
+    var $email = $('#email').val();
+    var $password = $('#password').val();
+
+    $.ajax({
+      type: 'POST',
+      url: '/api/user/login',
+      data: JSON.stringify({
+        email: $email,
+        password: $password
+      }),
+      success: function (res) {
+        localStorage.setItem('id', res.data.id);
+        localStorage.setItem('email', res.data.email);
+        localStorage.setItem('isLoggedIn', '1');
+
+        window.location.href = '/';
+      },
+      contentType: 'application/json; charset=utf-8',
+      dataType: 'json'
+    });
+  }
+</script>
+
+</body>
+</html>
