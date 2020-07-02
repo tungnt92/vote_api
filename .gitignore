@@ -1,3 +1,5 @@
+db.sqlite
+shipitfile.js
 # Logs
 logs
 *.log
