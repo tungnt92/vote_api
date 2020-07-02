@@ -35,6 +35,28 @@ app.get('/admin', (req, res, next) => {
   res.sendFile(path.join(__dirname + '/admin.html'));
 });
 
+app.get('/secret', (req, res, next) => {
+  res.sendFile(path.join(__dirname + '/secret.html'));
+});
+
+app.get('/api/secret', (req, res, next) => {
+  var sqlSecret = 'select * from user_vote' +
+    ' left join (select id as id_user, name as name_user_id from user) u1 on user_vote.id = u1.id_user' +
+    ' left join (select id as id_vote_king, name as name_vote_king from user) u2 on user_vote.vote_king = u2.id_vote_king' +
+    ' left join (select id as id_vote_queen, name as name_vote_queen from user) u3 on user_vote.vote_queen = u3.id_vote_queen';
+  var paramsSecret = [];
+  db.all(sqlSecret, paramsSecret, (err, rows) => {
+    if (err) {
+      res.status(400).json({'error': err.message});
+      return;
+    }
+    res.json({
+      'message': 'success',
+      'data': rows
+    });
+  });
+});
+
 // Insert here other API endpoints
 app.get('/api/users', (req, res, next) => {
   var sql = 'select * from user';
