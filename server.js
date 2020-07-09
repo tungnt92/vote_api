@@ -4,6 +4,7 @@ var app = express();
 var db = require('./database.js');
 const path = require('path');
 var md5 = require('md5');
+var fs = require('fs');
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
@@ -39,11 +40,15 @@ app.get('/secret', (req, res, next) => {
   res.sendFile(path.join(__dirname + '/secret.html'));
 });
 
+app.get('/create', (req, res, next) => {
+  res.sendFile(path.join(__dirname + '/create.html'));
+});
+
 app.get('/api/secret', (req, res, next) => {
   var sqlSecret = 'select * from user_vote' +
-    ' left join (select id as id_user, name as name_user_id from user) u1 on user_vote.id = u1.id_user' +
-    ' left join (select id as id_vote_king, name as name_vote_king from user) u2 on user_vote.vote_king = u2.id_vote_king' +
-    ' left join (select id as id_vote_queen, name as name_vote_queen from user) u3 on user_vote.vote_queen = u3.id_vote_queen';
+    ' left join (select id as id_user, name as name_user_id, url_img as url_img_user from user) u1 on user_vote.id = u1.id_user' +
+    ' left join (select id as id_vote_king, name as name_vote_king, url_img as url_img_vote_king from user) u2 on user_vote.vote_king = u2.id_vote_king' +
+    ' left join (select id as id_vote_queen, name as name_vote_queen, url_img as url_img_vote_queen from user) u3 on user_vote.vote_queen = u3.id_vote_queen';
   var paramsSecret = [];
   db.all(sqlSecret, paramsSecret, (err, rows) => {
     if (err) {
@@ -75,8 +80,8 @@ app.get('/api/users', (req, res, next) => {
 
 // get King
 app.get('/api/users/:gender', (req, res, next) => {
-  var sql = 'select * from user where gender = ?';
-  var params = [req.params.gender];
+  var sql = 'select * from user where gender = ? and email != ?';
+  var params = [req.params.gender, 'admin@gumiviet.com'];
   db.all(sql, params, (err, rows) => {
     if (err) {
       res.status(400).json({'error': err.message});
@@ -275,6 +280,42 @@ app.get('/api/vote_result', (req, res, next) => {
     })
   });
 });
+
+
+
+const uploadImage = async (req, res, next) => {
+  var sqlInsertUser = 'INSERT INTO user (name, email, gender, password, url_img) VALUES (?,?,?,?,?)';
+
+  const hashPsw = md5(req.body.psw);
+  const imgdata = req.body.img;
+  const fileType = imgdata.split(';')[0];
+  const mime = fileType.split('/')[1];
+
+  const path = Date.now()+'.'+mime;
+  const pathSaveFile = './assets/images/user/'+path;
+  const pathSaveDB = 'images/user/'+path;
+
+  // to convert base64 format into random filename
+  const base64Data = imgdata.replace(/^data:([A-Za-z-+/]+);base64,/, '');
+
+  fs.writeFileSync(pathSaveFile, base64Data,  {encoding: 'base64'});
+
+  var paramsInsertUser = [req.body.name, req.body.email, req.body.gender, hashPsw, pathSaveDB];
+
+  // insert db
+  db.run(sqlInsertUser, paramsInsertUser, function (err, result) {
+    if (err) {
+      res.status(400).json({'error': err.message});
+      return;
+    }
+    res.json({
+      'message': 'success',
+      'data': paramsInsertUser
+    });
+  });
+};
+
+app.post('/api/create', uploadImage);
 
 // Default response for any other request
 app.use(function (req, res) {

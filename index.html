@@ -32,7 +32,7 @@
   <div class="clearfix"></div>
   <div class="content-wrapper">
     <div class="container-fluid">
-      <div class="row mt-3">
+      <div id="body" class="row mt-3">
         <div class="col-lg-6">
           <div class="card">
             <div class="card-body">
@@ -78,12 +78,61 @@
 <script>
   $(document).ready(function () {
     var isLoggedIn = localStorage.getItem('isLoggedIn');
+    var pageCreate = '/create';
+    var pageUpdate = '/update';
+    var email = localStorage.getItem('email');
     if (isLoggedIn && parseInt(isLoggedIn)) {
       console.log('isLoggedIn');
+      if(email === 'admin@gumiviet.com') {
+        $('#body').append('<div class="col-lg-6">' +
+          '          <div class="card">' +
+          '          <div class="card-body">' +
+          '          <div class="card-title">' +
+          '          ADMIN' +
+          '        </div>' +
+          '        <hr>' +
+          '        <button type="button" class="btn btn-light px-5" style="width: 100%; height: 100px" onclick="window.location.href=' +
+          '\'' + pageCreate + '\'' + '">' +
+          '          CREATE USER' +
+          '        </button>' +
+          '<hr>' +
+          '        <button type="button" class="btn btn-light px-5" style="width: 100%; height: 100px" onclick="window.location.href=' +
+          '\'' + pageUpdate + '\'' + '">' +
+          '          UPDATE' +
+          '        </button>' +
+          '<hr>' +
+          '        <button type="button" class="btn btn-light px-5" style="width: 100%; height: 100px" onclick="logout()">' +
+          '          LOGOUT' +
+          '        </button>' +
+          '        </div>' +
+          '        </div>' +
+          '        </div>');
+      } else {
+        $('#body').append('<div class="col-lg-6">' +
+          '          <div class="card">' +
+          '          <div class="card-body">' +
+          '          <div class="card-title">' +
+          '          LOGOUT' +
+          '        </div>' +
+          '        <hr>' +
+          '        <button type="button" class="btn btn-light px-5" style="width: 100%; height: 100px" onclick="logout()">' +
+          '          LOGOUT' +
+          '        </button>' +
+          '        </div>' +
+          '        </div>' +
+          '        </div>');
+      }
     } else {
       window.location.href = '/login';
     }
   });
+
+  function logout () {
+    localStorage.removeItem('id');
+    localStorage.removeItem('email');
+    localStorage.removeItem('isLoggedIn');
+    window.location.href = '/login';
+  }
 </script>
 
 </body>
