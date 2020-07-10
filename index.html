@@ -228,40 +228,50 @@
 
   function settingVote () {
     var inputCheck = $('input[name="display_ui"]:checked').val();
-    var dataPost;
     if(inputCheck) {
       if(confirm('Bạn có muốn MỞ chức năng VOTE không ?')) {
-        dataPost = 1;
+        $.ajax({
+          type: 'POST',
+          url: '/api/setting',
+          contentType: 'application/json; charset=utf-8',
+          dataType: 'json',
+          data: JSON.stringify({
+            setting: 1
+          }),
+          success: function (res) {
+            window.location.reload();
+          },
+          error: function (XMLHttpRequest, textStatus, errorThrown) {
+            var error = XMLHttpRequest.responseJSON.error;
+            alert(error);
+          },
+        });
       } else {
         $('input[name="display_ui"]').prop('checked', false);
       }
     } else {
       if(confirm('Bạn có muốn TẮT chức năng VOTE không ?')) {
-        dataPost = 0;
+        $.ajax({
+          type: 'POST',
+          url: '/api/setting',
+          contentType: 'application/json; charset=utf-8',
+          dataType: 'json',
+          data: JSON.stringify({
+            setting: 0
+          }),
+          success: function (res) {
+            window.location.reload();
+          },
+          error: function (XMLHttpRequest, textStatus, errorThrown) {
+            var error = XMLHttpRequest.responseJSON.error;
+            alert(error);
+          },
+        });
       }
       else {
         $('input[name="display_ui"]').prop('checked', true);
       }
     }
-
-    $.ajax({
-      type: 'POST',
-      url: '/api/setting',
-      contentType: 'application/json; charset=utf-8',
-      dataType: 'json',
-      data: JSON.stringify({
-        setting: dataPost
-      }),
-      success: function (res) {
-        window.location.reload();
-      },
-      error: function (XMLHttpRequest, textStatus, errorThrown) {
-        var error = XMLHttpRequest.responseJSON.error;
-        alert(error);
-      },
-    });
-
-
 
   }
 </script>
