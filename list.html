@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>List User</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+  <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+  <style>
+    img {
+      width: 100%;
+    }
+    .fas {
+      font-size: 18px;
+    }
+    .btn {
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th>No</th>
+      <th>User</th>
+      <th>Update</th>
+      <th>Delete</th>
+    </tr>
+    </thead>
+    <tbody id="table">
+
+    </tbody>
+  </table>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script>
+  $(document).ready(function () {
+    $.ajax({
+      type: 'GET',
+      url: '/api/users',
+      contentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      success: function (res) {
+        var $table = $('#table');
+        res.data.forEach(function (item, index) {
+          let id = item.id;
+          let name = item.name;
+          let imgUser = item.url_img;
+          $table.append('<tr>' +
+            '<td>' +
+            '<span>' + name + '</span>' +
+            '<td>' +
+            ' <div class="user-image">' +
+            '     <img src="' + imgUser + '" alt="chưa có">' +
+            ' </div>' +
+            '</td>' +
+            '<td>' +
+            '  <button class="btn fas fa-edit" onclick="update('+id+')"></button>'  +
+            '</td>' +
+            '<td>' +
+            '  <button class="btn fas fa-trash-alt" onclick="delet(' + id + ')"></button>'  +
+            '</td>' +
+            '</tr>');
+        });
+      },
+    });
+  });
+
+  function delet(id) {
+    var currentUser = localStorage.getItem('id');
+    if(currentUser == id) {
+      alert('Tự xoá bản thân lun hả ? Như vậy là không được nhe !!!!!!')
+    } else {
+      if(window.confirm('Tiếp tục xoá ?')) {
+        $.ajax({
+          type: 'DELETE',
+          url: '/api/users/delete/'+id,
+          contentType: 'application/json; charset=utf-8',
+          dataType: 'json',
+          success: function (res) {
+            if(res) {
+              window.location.reload();
+            }
+          },
+          error: function (XMLHttpRequest, textStatus, errorThrown) {
+            var error = XMLHttpRequest.responseJSON.error;
+            alert(error);
+          },
+        });
+      }
+    }
+  }
+
+  function update(id){
+    window.location.href = '/update?user_id='+id;
+  }
+
+</script>
+</body>
+</html>
