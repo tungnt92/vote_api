@@ -5,7 +5,6 @@ var db = require('./database.js');
 const path = require('path');
 var md5 = require('md5');
 var fs = require('fs');
-const sharp = require('sharp');
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
