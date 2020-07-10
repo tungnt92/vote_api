@@ -21,6 +21,12 @@ let db = new sqlite3.Database(DBSOURCE, (err) => {
     //       // Table already created
     //     }
     //   });
+    // db.run(`drop table setting`,
+    //   (err) => {
+    //     if (err) {
+    //       // Table already created
+    //     }
+    //   });
     console.log('Connected to the SQLite database.');
     db.run(`CREATE TABLE user (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -159,7 +165,20 @@ let db = new sqlite3.Database(DBSOURCE, (err) => {
         } else {
           // var insert = 'INSERT INTO user_vote (user_id, vote_king, vote_queen) VALUES (?,?,?)';
         }
-      });
+    });
+
+    db.run(`CREATE TABLE setting(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            setting INTEGER
+            )`,
+      (err) => {
+        if (err) {
+          // Table already created
+        } else {
+          var insert = 'INSERT INTO setting (setting) VALUES (?)';
+          db.run(insert, ['0']);
+        }
+    });
 
   }
 });

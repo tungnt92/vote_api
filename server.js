@@ -52,6 +52,22 @@ app.get('/update', (req, res, next) => {
   res.sendFile(path.join(__dirname + '/update.html'));
 });
 
+const middleSetting = async (req, res, next) => {
+  let sql = 'SELECT * FROM setting WHERE id = 1;';
+  let params = [];
+  db.get(sql, params, (err, row) => {
+    if (err) {
+      res.status(400).json({'error': err.message});
+      return;
+    }
+    if(row.setting === 1) {
+      next();
+    } else {
+      return res.status(400).json({'error': 'Hết thời gian vote rồi nhe.'});
+    }
+  });
+};
+
 app.get('/api/secret', (req, res, next) => {
   var sqlSecret = 'select * from user_vote' +
     ' left join (select id as id_user, name as name_user_id, url_img as url_img_user from user) u1 on user_vote.id = u1.id_user' +
@@ -136,7 +152,7 @@ app.post('/api/user/login', (req, res, next) => {
   });
 });
 
-app.post('/api/vote', (req, res, next) => {
+app.post('/api/vote', middleSetting, (req, res, next) => {
   var sql = 'select * from user_vote where user_id = ?';
   var params = [req.body.id];
   db.get(sql, params, (err, row) => {
@@ -398,8 +414,34 @@ app.put('/api/users/update/:id', (req, res, next) => {
       });
     });
   });
+});
 
+app.get('/api/setting', (req, res, next) => {
+  let sql = 'SELECT * FROM setting WHERE id = 1;';
+  let params = [];
+  db.get(sql, params, (err, row) => {
+    if (err) {
+      res.status(400).json({'error': err.message});
+      return;
+    }
+    res.json({
+      'setting': row.setting
+    });
+  });
+});
 
+app.post('/api/setting', (req, res, next) => {
+  let sql = 'UPDATE setting SET setting = ? WHERE id = 1;';
+  let params = [req.body.setting];
+  db.run(sql, params, (err, row) => {
+    if (err) {
+      res.status(400).json({'error': err.message});
+      return;
+    }
+    res.json({
+      'status': 200
+    });
+  });
 });
 
 // Default response for any other request
