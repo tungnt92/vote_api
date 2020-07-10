@@ -79,7 +79,7 @@
   $(document).ready(function () {
     var isLoggedIn = localStorage.getItem('isLoggedIn');
     var pageCreate = '/create';
-    var pageUpdate = '/update';
+    var pageUpdate = '/list';
     var email = localStorage.getItem('email');
     if (isLoggedIn && parseInt(isLoggedIn)) {
       console.log('isLoggedIn');
@@ -98,7 +98,7 @@
           '<hr>' +
           '        <button type="button" class="btn btn-light px-5" style="width: 100%; height: 100px" onclick="window.location.href=' +
           '\'' + pageUpdate + '\'' + '">' +
-          '          UPDATE' +
+          '          UPDATE-DELETE' +
           '        </button>' +
           '<hr>' +
           '        <button type="button" class="btn btn-light px-5" style="width: 100%; height: 100px" onclick="logout()">' +

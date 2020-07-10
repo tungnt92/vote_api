@@ -5,6 +5,7 @@ var db = require('./database.js');
 const path = require('path');
 var md5 = require('md5');
 var fs = require('fs');
+const sharp = require('sharp');
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
@@ -42,6 +43,14 @@ app.get('/secret', (req, res, next) => {
 
 app.get('/create', (req, res, next) => {
   res.sendFile(path.join(__dirname + '/create.html'));
+});
+
+app.get('/list', (req, res, next) => {
+  res.sendFile(path.join(__dirname + '/list.html'));
+});
+
+app.get('/update', (req, res, next) => {
+  res.sendFile(path.join(__dirname + '/update.html'));
 });
 
 app.get('/api/secret', (req, res, next) => {
@@ -316,6 +325,83 @@ const uploadImage = async (req, res, next) => {
 };
 
 app.post('/api/create', uploadImage);
+
+
+app.del('/api/users/delete/:id', (req, res, next) => {
+  var sql = 'DELETE FROM user WHERE id = ?;';
+  var params = [req.params.id];
+  db.run(sql, params, (err, rows) => {
+    if (err) {
+      res.status(400).json({'error': err.message});
+      return;
+    }
+    res.json({
+      'status': 204,
+    });
+  });
+});
+
+app.put('/api/users/update/:id', (req, res, next) => {
+
+  var sqlCurrenUser = 'SELECT * FROM user WHERE id = ?;';
+  var paramsUserId = [req.params.id];
+
+  db.get(sqlCurrenUser, paramsUserId, (err, row) => {
+    if (err) {
+      res.status(400).json({'error': err.message});
+      return;
+    }
+    var sqlUpdate;
+    var params;
+    var hashPsw =  md5(req.body.psw);
+
+    // check image
+    if(row.url_img === req.body.img) {
+      // check email
+      if(row.email === req.body.email) {
+        sqlUpdate = 'UPDATE user SET name = ?, gender = ?, password =? WHERE id = ?;';
+        params = [req.body.name, req.body.gender, hashPsw, req.params.id];
+      } else {
+        sqlUpdate = 'UPDATE user SET name = ?, email = ?, gender = ?, password =? WHERE id = ?;';
+        params = [req.body.name, req.body.email, req.body.gender, hashPsw, req.params.id];
+      }
+    } else {
+      // upload img
+      const imgdata = req.body.img;
+      const fileType = imgdata.split(';')[0];
+      const mime = fileType.split('/')[1];
+
+      const path = Date.now()+'.'+mime;
+      const pathSaveFile = './assets/images/user/'+path;
+      const pathSaveDB = 'images/user/'+path;
+
+      // to convert base64 format into random filename
+      const base64Data = imgdata.replace(/^data:([A-Za-z-+/]+);base64,/, '');
+
+      fs.writeFileSync(pathSaveFile, base64Data,  {encoding: 'base64'});
+      // check email
+      if(row.email === req.body.email) {
+        sqlUpdate = 'UPDATE user SET name = ?, gender = ?, url_img = ?, password =? WHERE id = ?;';
+        params = [req.body.name, req.body.gender, pathSaveDB, hashPsw, req.params.id];
+      } else {
+        sqlUpdate = 'UPDATE user SET name = ?, email = ?, gender = ?, url_img = ?, password =? WHERE id = ?;';
+        params = [req.body.name, req.body.email, req.body.gender, pathSaveDB, hashPsw, req.params.id];
+      }
+    }
+
+    db.run(sqlUpdate, params, (err, rows) => {
+      if (err) {
+        res.status(400).json({'error': err.message});
+        return;
+      }
+      res.json({
+        'status': 200
+      });
+    });
+  });
+
+
+});
 
 // Default response for any other request
 app.use(function (req, res) {
