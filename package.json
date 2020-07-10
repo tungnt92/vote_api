@@ -8,7 +8,6 @@
     "md5": "^2.2.1",
     "nodemon": "^2.0.4",
     "path": "^0.12.7",
-    "sharp": "^0.25.4",
     "sqlite3": "^4.2.0"
   },
   "devDependencies": {
