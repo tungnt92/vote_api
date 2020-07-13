@@ -135,6 +135,10 @@
             window.location.href = '/';
           }
         },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+          var error = XMLHttpRequest.responseJSON.error;
+          alert(error);
+        },
         contentType: 'application/json; charset=utf-8',
         dataType: 'json'
       });
