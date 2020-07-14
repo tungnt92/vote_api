@@ -173,6 +173,10 @@
           ' </label>' +
           '</div> ' +
           '<hr>' +
+          ' <button type="button" class="btn btn-light px-5" style="width: 100%; height: 100px" onclick="resetVote()">' +
+          '  RESET RESULT VOTE' +
+          ' </button>' +
+          '<hr>' +
           '        <button type="button" class="btn btn-light px-5" style="width: 100%; height: 100px" onclick="logout()">' +
           '          LOGOUT' +
           '        </button>' +
@@ -272,8 +276,25 @@
         $('input[name="display_ui"]').prop('checked', true);
       }
     }
-
   }
+
+  function resetVote() {
+    if(confirm('Nút này nguy hiểm lắm đó la. Xoá toàn bộ kết quả đã vote. ')) {
+      $.ajax({
+        type: 'DELETE',
+        url: 'api/reset_vote',
+        contentType: 'application/json; charset=utf-8',
+        success: function (res) {
+          window.location.reload();
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+          var error = XMLHttpRequest.responseJSON.error;
+          alert(error);
+        },
+      });
+    }
+  }
+
 </script>
 
 </body>

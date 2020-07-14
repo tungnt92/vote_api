@@ -63,7 +63,7 @@ const middleSetting = async (req, res, next) => {
     if(row.setting === 1) {
       next();
     } else {
-      return res.status(400).json({'error': 'Hết thời gian vote rồi nhe.'});
+      return res.status(400).json({'error': 'Không nằm trong thời gian vote nha.'});
     }
   });
 };
@@ -436,6 +436,39 @@ app.post('/api/setting', (req, res, next) => {
   db.run(sql, params, (err, row) => {
     if (err) {
       res.status(400).json({'error': err.message});
+      return;
+    }
+    res.json({
+      'status': 200
+    });
+  });
+});
+
+
+app.del('/api/reset_vote', async (req, res, next) => {
+  let sql = 'SELECT * FROM user_vote;';
+  let params = [];
+  db.all(sql, params, (err, rows) => {
+    if (err) {
+      res.status(400).json({'error': err.message});
+      return;
+    }
+    
+    const nameFile = 'log-vote-'+Date.now();
+
+    fs.writeFile(nameFile, JSON.stringify(rows), function (err) {
+      console.log(err);
+    });
+
+  });
+
+  //delet table
+  let sqlTruncate = 'DELETE FROM user_vote;';
+  let paramsTruncate = [];
+
+  db.run(sqlTruncate, paramsTruncate, (err, row) => {
+    if (err) {
+      res.status(400).json({'error': err});
       return;
     }
     res.json({
